@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { ChangeEvent, useEffect, useState } from "react";
 
 export default function Home() {
   const defaultScore = [
@@ -55,36 +54,85 @@ export default function Home() {
     }
   }
 
-  /*   useEffect(() => {
-    console.log({
+  function validScoreInput(event: ChangeEvent<HTMLInputElement>) {
+    const { value } = event.target;
+    return (
+      Number.isInteger(parseInt(event.target.value)) ||
+      value === "-" ||
+      value === ""
+    );
+  }
+
+  function saveScoreToStorage(player: number, updatedScore: (number | null)[]) {
+    const currentGameState = [
       playerOneScore,
       playerTwoScore,
       playerThreeScore,
       playerFourScore,
-    });
-  }, [playerOneScore, playerTwoScore, playerThreeScore, playerFourScore]); */
+    ];
 
-  useEffect(() => {
+    currentGameState[player - 1] = updatedScore;
+    const state = JSON.stringify(currentGameState);
+    state && localStorage.setItem("scores", state);
+  }
+
+  function loadStorageScore() {
     const savedGameState = localStorage.getItem("scores");
-    const savedPlayersState = localStorage.getItem("players");
     if (savedGameState) {
       const scores = JSON.parse(savedGameState);
-      setPlayerOneScore(scores["playerOneScore"]);
-      setPlayerTwoScore(scores["playerTwoScore"]);
-      setPlayerThreeScore(scores["playerThreeScore"]);
-      setPlayerFourScore(scores["playerFourScore"]);
+      console.log({ scores });
+
+      setPlayerOneScore(scores[0]);
+      setPlayerTwoScore(scores[1]);
+      setPlayerThreeScore(scores[2]);
+      setPlayerFourScore(scores[3]);
     }
+  }
+
+  function loadStoragePlayers() {
+    const savedPlayersState = localStorage.getItem("players");
     if (savedPlayersState) {
       console.log(JSON.parse(savedPlayersState));
-
       setPlayerNames(JSON.parse(savedPlayersState));
     }
-  }, []);
+  }
 
   function getCellScore(player: number, cell: number) {
     const { score } = getPlayerScoreSetter(player);
     return score?.[cell];
   }
+
+  function handleOnScoreChange(
+    event: ChangeEvent<HTMLInputElement>,
+    player: number,
+    scoreIndex: number
+  ) {
+    if (validScoreInput(event)) {
+      const { setter, score = [] } = getPlayerScoreSetter(player);
+      const updatedScore = [...score];
+      updatedScore[scoreIndex] = parseInt(event.target.value);
+      setter?.(updatedScore);
+      saveScoreToStorage(player, updatedScore);
+    }
+  }
+
+  function handleOnReset() {
+    {
+      const confirm = window.confirm("Rensa alla poäng och börja om?");
+      if (confirm) {
+        localStorage.removeItem("scores");
+        setPlayerOneScore(defaultScore);
+        setPlayerTwoScore(defaultScore);
+        setPlayerThreeScore(defaultScore);
+        setPlayerFourScore(defaultScore);
+      }
+    }
+  }
+
+  useEffect(() => {
+    loadStoragePlayers();
+    loadStorageScore();
+  }, []);
 
   return (
     <main className="flex flex-col min-h-screen p-2 bg-gradient-to-b from-indigo-500 via-purple-500  to-pink-500">
@@ -92,13 +140,7 @@ export default function Home() {
         <h1 className="text-2xl p-0 m-0">SKYJO SCORE</h1>
         <button
           type="button"
-          onClick={() => {
-            localStorage.removeItem("scores");
-            setPlayerOneScore(defaultScore);
-            setPlayerTwoScore(defaultScore);
-            setPlayerThreeScore(defaultScore);
-            setPlayerFourScore(defaultScore);
-          }}
+          onClick={handleOnReset}
           className="btn self-end btn-ghost border-white"
         >
           Börja om
@@ -106,16 +148,8 @@ export default function Home() {
       </div>
       <div className="flex justify-between h-12 w-full ">
         <table className="table shadow-lg">
-          <thead>
-            <tr>
-              <th className=""></th>
-              <th></th>
-              <th></th>
-              <th></th>
-            </tr>
-          </thead>
           <tbody>
-            <tr className="">
+            <tr>
               {playerNames.map((_, index) => {
                 return (
                   <th
@@ -123,7 +157,7 @@ export default function Home() {
                     className="rounded-md p-0 m-0 border border-stone-500"
                   >
                     <input
-                      className="h-10 bg-green-800 text-white  first:rounded-t-md last:rounded-t-md text-center"
+                      className="h-10  bg-gray-700 text-white  first:rounded-t-md last:rounded-t-md text-center"
                       style={{
                         width: "100%",
                       }}
@@ -157,14 +191,15 @@ export default function Home() {
                   ?.filter(Number.isInteger)
                   .map((s) => Number(s));
 
-                const totalPlayerScore = scoresAsNum?.reduce(
-                  (acc, curr) => acc + curr,
-                  0
-                );
-
+                const totalPlayerScore =
+                  scoresAsNum?.reduce((acc, curr) => acc + curr, 0) || 0;
                 return (
                   <td key={index} className="p-0 m-0 border-r last:border-r-0">
-                    <div className="font-bold bg-gray-700 text-white flex justify-center h-10 items-center">
+                    <div
+                      className={`font-bold ${
+                        totalPlayerScore < 50 ? "bg-green-800" : "bg-red-700"
+                      } text-white flex justify-center h-10 items-center`}
+                    >
                       {totalPlayerScore}
                     </div>
                   </td>
@@ -178,37 +213,13 @@ export default function Home() {
                     return (
                       <td
                         key={player}
-                        className="p-0 m-0 border-r last-border-r-0 border-b border-stone-400"
+                        className="p-0 m-0 border-r w-1/4 last-border-r-0 border-b border-stone-400"
                       >
                         <input
-                          onBlur={() => {
-                            const state = JSON.stringify({
-                              playerOneScore,
-                              playerTwoScore,
-                              playerThreeScore,
-                              playerFourScore,
-                            });
-                            localStorage.setItem("scores", state);
-                          }}
-                          onChange={({ target: { value } }) => {
-                            console.log({ value });
-
-                            if (
-                              Number.isInteger(parseInt(value)) ||
-                              value === "-" ||
-                              value === ""
-                            ) {
-                              const { setter, score = [] } =
-                                getPlayerScoreSetter(player);
-                              const updatedScore = [...score];
-                              updatedScore[scoreIndex] = parseInt(value);
-                              setter?.(updatedScore);
-                            }
-                          }}
-                          className="h-10 rounded-none text-center"
-                          style={{
-                            width: "100%",
-                          }}
+                          onChange={(event) =>
+                            handleOnScoreChange(event, player, scoreIndex)
+                          }
+                          className="h-10 w-full rounded-none text-center"
                           value={getCellScore(player, scoreIndex) || ""}
                           maxLength={3}
                           type="number"
