@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+th,
+td {
+  font-size: 16px;
+}
+
+input:focus {
+  box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.25);
+  outline: none;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;

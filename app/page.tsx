@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const defaultScore = [
@@ -24,6 +25,8 @@ export default function Home() {
     useState<(number | null)[]>(defaultScore);
   const [playerFourScore, setPlayerFourScore] =
     useState<(number | null)[]>(defaultScore);
+
+  const [totalScore, setTotalScore] = useState([0, 0, 0, 0]);
 
   function getPlayerScoreSetter(index: number) {
     switch (index) {
@@ -61,10 +64,30 @@ export default function Home() {
     });
   }, [playerOneScore, playerTwoScore, playerThreeScore, playerFourScore]); */
 
+  const router = useRouter();
+
+  function getCellScore(player: number, cell: number) {
+    const { score } = getPlayerScoreSetter(player);
+
+    return score?.[cell];
+  }
+
   return (
     <main className="flex flex-col min-h-screen p-2 bg-gradient-to-b from-indigo-500 via-purple-500  to-pink-500">
-      <div className="flex justify-center text-white">
+      <div className="flex justify-between items-center text-white">
         <h1 className="text-2xl p-0 m-0">SKYJO SCORE</h1>
+        <button
+          type="button"
+          onClick={() => {
+            setPlayerOneScore(defaultScore);
+            setPlayerTwoScore(defaultScore);
+            setPlayerThreeScore(defaultScore);
+            setPlayerFourScore(defaultScore);
+          }}
+          className="btn self-end btn-ghost border-white"
+        >
+          Börja om
+        </button>
       </div>
       <div className="flex justify-between h-12 w-full ">
         <table className="table shadow-lg">
@@ -100,18 +123,19 @@ export default function Home() {
             <tr>
               {[1, 2, 3, 4].map((index) => {
                 const { score } = getPlayerScoreSetter(index);
-                console.log({ sc: score });
+                const scoresAsNum = score
+                  ?.filter(Number.isInteger)
+                  .map((s) => Number(s));
 
-                const scoresAsNum = score?.map((s) => {
-                  return Number(s);
-                });
-
-                const total = scoresAsNum?.reduce((a, b) => a + b);
+                const totalPlayerScore = scoresAsNum?.reduce(
+                  (acc, curr) => acc + curr,
+                  0
+                );
 
                 return (
                   <td key={index} className="p-0 m-0 border-r last:border-r-0">
                     <div className="font-bold bg-gray-700 text-white flex justify-center h-10 items-center">
-                      {total}
+                      {totalPlayerScore}
                     </div>
                   </td>
                 );
@@ -127,10 +151,7 @@ export default function Home() {
                         className="p-0 m-0 border-r last-border-r-0 border-b border-stone-400"
                       >
                         <input
-                          onBlur={({ target: { value } }) => {
-                            if (value === "") {
-                              return;
-                            }
+                          onChange={({ target: { value } }) => {
                             const { setter, score = [] } =
                               getPlayerScoreSetter(player);
                             const updatedScore = [...score];
@@ -141,9 +162,10 @@ export default function Home() {
                           style={{
                             width: "100%",
                           }}
+                          value={getCellScore(player, scoreIndex) || ""}
                           size={1}
                           maxLength={3}
-                          type="tel"
+                          type="number"
                         />
                       </td>
                     );
