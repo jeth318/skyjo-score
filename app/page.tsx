@@ -17,6 +17,8 @@ export default function Home() {
     null,
   ];
 
+  const [playerNames, setPlayerNames] = useState(["", "", "", ""]);
+
   const [playerOneScore, setPlayerOneScore] =
     useState<(number | null)[]>(defaultScore);
   const [playerTwoScore, setPlayerTwoScore] =
@@ -25,8 +27,6 @@ export default function Home() {
     useState<(number | null)[]>(defaultScore);
   const [playerFourScore, setPlayerFourScore] =
     useState<(number | null)[]>(defaultScore);
-
-  const [totalScore, setTotalScore] = useState([0, 0, 0, 0]);
 
   function getPlayerScoreSetter(index: number) {
     switch (index) {
@@ -64,11 +64,25 @@ export default function Home() {
     });
   }, [playerOneScore, playerTwoScore, playerThreeScore, playerFourScore]); */
 
-  const router = useRouter();
+  useEffect(() => {
+    const savedGameState = localStorage.getItem("scores");
+    const savedPlayersState = localStorage.getItem("players");
+    if (savedGameState) {
+      const scores = JSON.parse(savedGameState);
+      setPlayerOneScore(scores["playerOneScore"]);
+      setPlayerTwoScore(scores["playerTwoScore"]);
+      setPlayerThreeScore(scores["playerThreeScore"]);
+      setPlayerFourScore(scores["playerFourScore"]);
+    }
+    if (savedPlayersState) {
+      console.log(JSON.parse(savedPlayersState));
+
+      setPlayerNames(JSON.parse(savedPlayersState));
+    }
+  }, []);
 
   function getCellScore(player: number, cell: number) {
     const { score } = getPlayerScoreSetter(player);
-
     return score?.[cell];
   }
 
@@ -79,6 +93,7 @@ export default function Home() {
         <button
           type="button"
           onClick={() => {
+            localStorage.removeItem("scores");
             setPlayerOneScore(defaultScore);
             setPlayerTwoScore(defaultScore);
             setPlayerThreeScore(defaultScore);
@@ -101,7 +116,7 @@ export default function Home() {
           </thead>
           <tbody>
             <tr className="">
-              {[1, 2, 3, 4].map((index) => {
+              {playerNames.map((_, index) => {
                 return (
                   <th
                     key={index}
@@ -111,6 +126,21 @@ export default function Home() {
                       className="h-10 bg-green-800 text-white  first:rounded-t-md last:rounded-t-md text-center"
                       style={{
                         width: "100%",
+                      }}
+                      value={playerNames[index]}
+                      onChange={({ target: { value } }) => {
+                        const updatedPlayerNames = [...playerNames];
+                        updatedPlayerNames[index] = value;
+                        setPlayerNames(updatedPlayerNames);
+                      }}
+                      onFocus={({ target }) => {
+                        target.setSelectionRange(0, target.value.length);
+                      }}
+                      onBlur={() => {
+                        localStorage.setItem(
+                          "players",
+                          JSON.stringify(playerNames)
+                        );
                       }}
                       size={1}
                       maxLength={7}
@@ -151,19 +181,35 @@ export default function Home() {
                         className="p-0 m-0 border-r last-border-r-0 border-b border-stone-400"
                       >
                         <input
+                          onBlur={() => {
+                            const state = JSON.stringify({
+                              playerOneScore,
+                              playerTwoScore,
+                              playerThreeScore,
+                              playerFourScore,
+                            });
+                            localStorage.setItem("scores", state);
+                          }}
                           onChange={({ target: { value } }) => {
-                            const { setter, score = [] } =
-                              getPlayerScoreSetter(player);
-                            const updatedScore = [...score];
-                            updatedScore[scoreIndex] = parseInt(value);
-                            setter?.(updatedScore);
+                            console.log({ value });
+
+                            if (
+                              Number.isInteger(parseInt(value)) ||
+                              value === "-" ||
+                              value === ""
+                            ) {
+                              const { setter, score = [] } =
+                                getPlayerScoreSetter(player);
+                              const updatedScore = [...score];
+                              updatedScore[scoreIndex] = parseInt(value);
+                              setter?.(updatedScore);
+                            }
                           }}
                           className="h-10 rounded-none text-center"
                           style={{
                             width: "100%",
                           }}
                           value={getCellScore(player, scoreIndex) || ""}
-                          size={1}
                           maxLength={3}
                           type="number"
                         />
