@@ -135,13 +135,13 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="flex flex-col min-h-screen p-2 bg-gradient-to-b from-indigo-500 via-purple-500  to-pink-500">
+    <main className="flex flex-col min-h-screen p-2 bg-gradient-to-b gap-2 from-indigo-500 via-purple-500  to-pink-500">
       <div className="flex justify-between items-center text-white">
         <h1 className="text-2xl p-0 m-0">SKYJO SCORE</h1>
         <button
           type="button"
           onClick={handleOnReset}
-          className="btn self-end btn-ghost border-white"
+          className="btn btn-sm self-end border-white"
         >
           Börja om
         </button>
@@ -152,19 +152,17 @@ export default function Home() {
             <tr>
               {playerNames.map((_, index) => {
                 return (
-                  <th
-                    key={index}
-                    className="rounded-md p-0 m-0 border border-stone-500"
-                  >
+                  <th key={index} className="player-name border p-0 m-0">
                     <input
-                      className="h-10  bg-gray-700 text-white  first:rounded-t-md last:rounded-t-md text-center"
+                      className="h-10 bg-slate-700 text-white  first:rounded-t-md last:rounded-t-md text-center"
                       style={{
                         width: "100%",
                       }}
+                      placeholder="Namn"
                       value={playerNames[index]}
                       onChange={({ target: { value } }) => {
                         const updatedPlayerNames = [...playerNames];
-                        updatedPlayerNames[index] = value;
+                        updatedPlayerNames[index] = value.toUpperCase();
                         setPlayerNames(updatedPlayerNames);
                       }}
                       onFocus={({ target }) => {
