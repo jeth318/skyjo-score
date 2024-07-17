@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Edu_VIC_WA_NT_Beginner } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
-const inter = Edu_VIC_WA_NT_Beginner({ subsets: ["latin"], weight: "400" });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Skyjo Score",

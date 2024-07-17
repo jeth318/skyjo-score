@@ -1,20 +1,13 @@
 "use client";
 
 import { ChangeEvent, useEffect, useState } from "react";
+import Players from "./ui/players";
+import TotalScore from "./ui/total-score";
+import ScoreRow from "./ui/score-row";
+import { validScoreInput } from "./lib/utils";
 
 export default function Home() {
-  const defaultScore = [
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-  ];
+  const defaultScore = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
   const [playerNames, setPlayerNames] = useState(["", "", "", ""]);
 
@@ -54,15 +47,6 @@ export default function Home() {
     }
   }
 
-  function validScoreInput(event: ChangeEvent<HTMLInputElement>) {
-    const { value } = event.target;
-    return (
-      Number.isInteger(parseInt(event.target.value)) ||
-      value === "-" ||
-      value === ""
-    );
-  }
-
   function saveScoreToStorage(player: number, updatedScore: (number | null)[]) {
     const currentGameState = [
       playerOneScore,
@@ -97,9 +81,9 @@ export default function Home() {
     }
   }
 
-  function getCellScore(player: number, cell: number) {
+  function getCellScore(player: number, cellIndex: number) {
     const { score } = getPlayerScoreSetter(player);
-    return score?.[cell];
+    return score?.[cellIndex];
   }
 
   function handleOnScoreChange(
@@ -137,7 +121,7 @@ export default function Home() {
   return (
     <main className="flex flex-col min-h-screen p-2 bg-gradient-to-b gap-2 from-indigo-500 via-purple-500  to-pink-500">
       <div className="flex justify-between items-center text-white">
-        <h1 className="text-2xl p-0 m-0">SKYJO SCORE</h1>
+        <h1 className="text-2xl font-extrabold p-0 m-0">SKYJO SCORE</h1>
         <button
           type="button"
           onClick={handleOnReset}
@@ -146,85 +130,37 @@ export default function Home() {
           Börja om
         </button>
       </div>
-      <div className="flex justify-between h-12 w-full ">
+      <div className="flex justify-between w-full">
         <table className="table shadow-lg">
           <tbody>
             <tr>
               {playerNames.map((_, index) => {
                 return (
-                  <th key={index} className="player-name border p-0 m-0">
-                    <input
-                      className="h-10 bg-slate-700 text-white  first:rounded-t-md last:rounded-t-md text-center"
-                      style={{
-                        width: "100%",
-                      }}
-                      placeholder="Namn"
-                      value={playerNames[index]}
-                      onChange={({ target: { value } }) => {
-                        const updatedPlayerNames = [...playerNames];
-                        updatedPlayerNames[index] = value.toUpperCase();
-                        setPlayerNames(updatedPlayerNames);
-                      }}
-                      onFocus={({ target }) => {
-                        target.setSelectionRange(0, target.value.length);
-                      }}
-                      onBlur={() => {
-                        localStorage.setItem(
-                          "players",
-                          JSON.stringify(playerNames)
-                        );
-                      }}
-                      size={1}
-                      maxLength={7}
-                      type="text"
-                    />
-                  </th>
+                  <Players
+                    key={`player-${index}`}
+                    index={index}
+                    playerNames={playerNames}
+                    setPlayerNames={setPlayerNames}
+                  />
                 );
               })}
             </tr>
             <tr>
               {[1, 2, 3, 4].map((index) => {
                 const { score } = getPlayerScoreSetter(index);
-                const scoresAsNum = score
-                  ?.filter(Number.isInteger)
-                  .map((s) => Number(s));
-
-                const totalPlayerScore =
-                  scoresAsNum?.reduce((acc, curr) => acc + curr, 0) || 0;
                 return (
-                  <td key={index} className="p-0 m-0 border-r last:border-r-0">
-                    <div
-                      className={`font-bold ${
-                        totalPlayerScore < 50 ? "bg-green-800" : "bg-red-700"
-                      } text-white flex justify-center h-10 items-center`}
-                    >
-                      {totalPlayerScore}
-                    </div>
-                  </td>
+                  <TotalScore key={`total-score-${index}`} score={score} />
                 );
               })}
             </tr>
             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((_, scoreIndex) => {
               return (
-                <tr key={`player-${scoreIndex}`}>
-                  {[1, 2, 3, 4].map((player, i) => {
-                    return (
-                      <td
-                        key={player}
-                        className="p-0 m-0 border-r w-1/4 last-border-r-0 border-b border-stone-400"
-                      >
-                        <input
-                          onChange={(event) =>
-                            handleOnScoreChange(event, player, scoreIndex)
-                          }
-                          className="h-10 w-full rounded-none text-center"
-                          value={getCellScore(player, scoreIndex) || ""}
-                          maxLength={3}
-                          type="number"
-                        />
-                      </td>
-                    );
-                  })}
+                <tr key={`row-${scoreIndex}`}>
+                  <ScoreRow
+                    getCellScore={getCellScore}
+                    handleOnScoreChange={handleOnScoreChange}
+                    scoreIndex={scoreIndex}
+                  />
                 </tr>
               );
             })}

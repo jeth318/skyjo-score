@@ -2,13 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-th,
 td {
-  font-size: 24px;
+  font-size: 22px;
 }
 
 .player-name {
-  font-size: 16px;
+  font-size: 17px;
 }
 
 input:focus {
