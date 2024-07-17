@@ -1,3 +1,5 @@
+import { getTotalScoreColor } from "../lib/utils";
+
 type Props = {
   score: (number | null)[] | undefined;
 };
@@ -8,14 +10,16 @@ export default function TotalScore({ score }: Props) {
   const totalPlayerScore =
     scoresAsNum?.reduce((acc, curr) => acc + curr, 0) || 0;
   return (
-    <td className="p-0 m-0 border-r last:border-r-0">
+    <div className="w-full border-r last:border-r-0">
       <div
-        className={`font-bold ${
-          totalPlayerScore < 50 ? "bg-green-800" : "bg-red-700"
-        } text-white flex justify-center h-10 items-center`}
+        className={`score-cell-xl font-bold ${getTotalScoreColor(
+          totalPlayerScore
+        )}  text-white flex justify-center h-14 items-center`}
       >
-        {totalPlayerScore}
+        <div className="flex flex-col">
+          <div className="flex justify-center">{totalPlayerScore}</div>
+        </div>
       </div>
-    </td>
+    </div>
   );
 }

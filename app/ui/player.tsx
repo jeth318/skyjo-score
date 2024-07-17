@@ -6,11 +6,11 @@ type Props = {
   setPlayerNames: Dispatch<SetStateAction<string[]>>;
 };
 
-export default function Players({ playerNames, setPlayerNames, index }: Props) {
+export default function Player({ playerNames, setPlayerNames, index }: Props) {
   return (
-    <th className=" border p-0 m-0">
+    <div className="border w-full border-b-none">
       <input
-        className="player-name h-10 bg-slate-700 text-white first:rounded-t-md last:rounded-t-md text-center"
+        className="h-10 bg-transparent text-white text-center"
         style={{
           width: "100%",
         }}
@@ -31,6 +31,6 @@ export default function Players({ playerNames, setPlayerNames, index }: Props) {
         maxLength={7}
         type="text"
       />
-    </th>
+    </div>
   );
 }

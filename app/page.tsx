@@ -1,10 +1,11 @@
 "use client";
 
 import { ChangeEvent, useEffect, useState } from "react";
-import Players from "./ui/players";
+import Players from "./ui/player";
 import TotalScore from "./ui/total-score";
 import ScoreRow from "./ui/score-row";
 import { validScoreInput } from "./lib/utils";
+import Player from "./ui/player";
 
 export default function Home() {
   const defaultScore = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -119,24 +120,26 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="flex flex-col min-h-screen p-2 bg-gradient-to-b gap-2 from-indigo-500 via-purple-500  to-pink-500">
+    <main className="flex flex-col min-h-screen p-2 bg-gradient-to-b gap-8   from-indigo-500 via-purple-500  to-pink-500">
       <div className="flex justify-between items-center text-white">
-        <h1 className="text-2xl font-extrabold p-0 m-0">SKYJO SCORE</h1>
+        <h1 className="text-2xl font-extrabold p-0 m-0">
+          <i>SKYJO SCORE</i>
+        </h1>
         <button
           type="button"
           onClick={handleOnReset}
-          className="btn btn-sm self-end border-white"
+          className="btn btn-sm btn-neutral shadow-lg"
         >
           Börja om
         </button>
       </div>
       <div className="flex justify-between w-full">
-        <table className="table shadow-lg">
-          <tbody>
-            <tr>
+        <div className="shadow-lg">
+          <div className="flex flex-col">
+            <div className="flex justify-between">
               {playerNames.map((_, index) => {
                 return (
-                  <Players
+                  <Player
                     key={`player-${index}`}
                     index={index}
                     playerNames={playerNames}
@@ -144,28 +147,28 @@ export default function Home() {
                   />
                 );
               })}
-            </tr>
-            <tr>
+            </div>
+            <div className="flex justify-between">
               {[1, 2, 3, 4].map((index) => {
                 const { score } = getPlayerScoreSetter(index);
                 return (
                   <TotalScore key={`total-score-${index}`} score={score} />
                 );
               })}
-            </tr>
+            </div>
             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((_, scoreIndex) => {
               return (
-                <tr key={`row-${scoreIndex}`}>
+                <div key={`row-${scoreIndex}`} className="border-none flex">
                   <ScoreRow
                     getCellScore={getCellScore}
                     handleOnScoreChange={handleOnScoreChange}
                     scoreIndex={scoreIndex}
                   />
-                </tr>
+                </div>
               );
             })}
-          </tbody>
-        </table>
+          </div>
+        </div>
       </div>
     </main>
   );
