@@ -33,7 +33,7 @@ export default function ScoreRow({
           maxLength={3}
           max={99}
           pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}"
-          type="tel"
+          type="number"
         />
       </div>
     );
