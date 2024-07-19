@@ -1,25 +1,23 @@
 "use client";
 
-import { ChangeEvent, useEffect, useState } from "react";
-import Players from "./ui/player";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import TotalScore from "./ui/total-score";
 import ScoreRow from "./ui/score-row";
 import { validScoreInput } from "./lib/utils";
 import Player from "./ui/player";
 
 export default function Home() {
-  const defaultScore = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-
+  const defaultScore = ["", "", "", "", "", "", "", "", "", ""];
   const [playerNames, setPlayerNames] = useState(["", "", "", ""]);
 
   const [playerOneScore, setPlayerOneScore] =
-    useState<(number | null)[]>(defaultScore);
+    useState<(number | string)[]>(defaultScore);
   const [playerTwoScore, setPlayerTwoScore] =
-    useState<(number | null)[]>(defaultScore);
+    useState<(number | string)[]>(defaultScore);
   const [playerThreeScore, setPlayerThreeScore] =
-    useState<(number | null)[]>(defaultScore);
+    useState<(number | string)[]>(defaultScore);
   const [playerFourScore, setPlayerFourScore] =
-    useState<(number | null)[]>(defaultScore);
+    useState<(number | string)[]>(defaultScore);
 
   function getPlayerScoreSetter(index: number) {
     switch (index) {
@@ -48,7 +46,10 @@ export default function Home() {
     }
   }
 
-  function saveScoreToStorage(player: number, updatedScore: (number | null)[]) {
+  function saveScoreToStorage(
+    player: number,
+    updatedScore: (number | string)[]
+  ) {
     const currentGameState = [
       playerOneScore,
       playerTwoScore,
@@ -65,7 +66,6 @@ export default function Home() {
     const savedGameState = localStorage.getItem("scores");
     if (savedGameState) {
       const scores = JSON.parse(savedGameState);
-      console.log({ scores });
 
       setPlayerOneScore(scores[0]);
       setPlayerTwoScore(scores[1]);
@@ -77,14 +77,13 @@ export default function Home() {
   function loadStoragePlayers() {
     const savedPlayersState = localStorage.getItem("players");
     if (savedPlayersState) {
-      console.log(JSON.parse(savedPlayersState));
       setPlayerNames(JSON.parse(savedPlayersState));
     }
   }
 
   function getCellScore(player: number, cellIndex: number) {
     const { score } = getPlayerScoreSetter(player);
-    return score?.[cellIndex];
+    return score?.[cellIndex] || "";
   }
 
   function handleOnScoreChange(
@@ -95,7 +94,7 @@ export default function Home() {
     if (validScoreInput(event)) {
       const { setter, score = [] } = getPlayerScoreSetter(player);
       const updatedScore = [...score];
-      updatedScore[scoreIndex] = parseInt(event.target.value);
+      updatedScore[scoreIndex] = event.target.value;
       setter?.(updatedScore);
       saveScoreToStorage(player, updatedScore);
     }

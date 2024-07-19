@@ -1,12 +1,10 @@
+"use client";
+
 import { ChangeEvent } from "react";
-import { validScoreInput, validScoreInputCapture } from "../lib/utils";
 
 type Props = {
   scoreIndex: number;
-  getCellScore: (
-    player: number,
-    scoreIndex: number
-  ) => number | null | undefined;
+  getCellScore: (player: number, scoreIndex: number) => number | string;
   handleOnScoreChange: (
     event: ChangeEvent<HTMLInputElement>,
     scoreIndex: number,
@@ -20,7 +18,7 @@ export default function ScoreRow({
   getCellScore,
 }: Props) {
   return [1, 2, 3, 4].map((player, i) => {
-    const cellScore = getCellScore(player, scoreIndex) || "";
+    const cellScore = getCellScore(player, scoreIndex);
     return (
       <div
         key={`player-${player}-score-${scoreIndex}`}
@@ -33,7 +31,9 @@ export default function ScoreRow({
           }`}
           value={cellScore}
           maxLength={3}
-          type="number"
+          max={99}
+          pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}"
+          type="tel"
         />
       </div>
     );

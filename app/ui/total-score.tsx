@@ -1,12 +1,11 @@
 import { getTotalScoreColor } from "../lib/utils";
 
 type Props = {
-  score: (number | null)[] | undefined;
+  score: (number | string)[] | undefined;
 };
 
 export default function TotalScore({ score }: Props) {
-  const scoresAsNum = score?.filter(Number.isInteger).map((s) => Number(s));
-
+  const scoresAsNum = score?.map((s) => Number(s)).filter(Number.isInteger);
   const totalPlayerScore =
     scoresAsNum?.reduce((acc, curr) => acc + curr, 0) || 0;
   return (
