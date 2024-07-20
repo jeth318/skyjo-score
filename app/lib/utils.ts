@@ -14,5 +14,9 @@ export function getTotalScoreColor(score: number) {
 }
 
 export function validScoreInput(event: ChangeEvent<HTMLInputElement>) {
-  return pattern.test(event.target.value);
+  console.log(event.target.value);
+  console.log(pattern.test(event.target.value));
+  console.log(event.target.value.length);
+
+  return event.target.value.length <= 3 && pattern.test(event.target.value);
 }

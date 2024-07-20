@@ -8,7 +8,7 @@ type Props = {
 
 export default function Player({ playerNames, setPlayerNames, index }: Props) {
   return (
-    <div className="border w-full border-b-none">
+    <div className="border w-full border-b-none fade-in-animation">
       <input
         className="h-10 bg-transparent text-white text-center"
         style={{
