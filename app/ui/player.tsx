@@ -8,7 +8,7 @@ type Props = {
 
 export default function Player({ playerNames, setPlayerNames, index }: Props) {
   return (
-    <div className="border w-full border-b-none fade-in-animation">
+    <div className="h-10 border first:rounded-tl-lg last:rounded-tr-lg w-full border-b-none">
       <input
         className="h-10 bg-transparent text-white text-center"
         style={{
@@ -20,12 +20,10 @@ export default function Player({ playerNames, setPlayerNames, index }: Props) {
           const updatedPlayerNames = [...playerNames];
           updatedPlayerNames[index] = value.toUpperCase();
           setPlayerNames(updatedPlayerNames);
+          localStorage.setItem("players", JSON.stringify(updatedPlayerNames));
         }}
         onFocus={({ target }) => {
           target.setSelectionRange(0, target.value.length);
-        }}
-        onBlur={() => {
-          localStorage.setItem("players", JSON.stringify(playerNames));
         }}
         size={1}
         maxLength={7}

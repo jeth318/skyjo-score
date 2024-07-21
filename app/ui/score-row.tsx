@@ -19,15 +19,22 @@ export default function ScoreRow({
 }: Props) {
   return [1, 2, 3, 4].map((player, i) => {
     const cellScore = getCellScore(player, scoreIndex);
+    const isLastRowFirstColumn = player === 1 && scoreIndex === 9;
+    const isLastRowLastColumn = player === 4 && scoreIndex === 9;
+
     return (
       <div
         key={`player-${player}-score-${scoreIndex}`}
-        className="score-cell  h-10 border border-b-stone-400 border-r-stone-400 text-center fade-in-animation"
+        className={`score-cell h-10 border border-b-stone-400 border-r-stone-400 text-center ${
+          isLastRowFirstColumn ? "rounded-bl-md" : ""
+        } ${isLastRowLastColumn ? "rounded-br-md" : ""}`}
       >
         <input
           onChange={(event) => handleOnScoreChange(event, player, scoreIndex)}
           className={`h-full w-full rounded-none text-center ${
             Number(cellScore) < 0 ? "text-blue-600" : ""
+          } ${isLastRowFirstColumn ? "rounded-bl-md" : ""} ${
+            isLastRowLastColumn ? "rounded-br-md" : ""
           }`}
           value={cellScore}
           maxLength={3}

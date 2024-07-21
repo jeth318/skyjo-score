@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
+import Head from "next/head";
 
 const inter = Montserrat({ subsets: ["latin"], weight: "400" });
 
@@ -16,6 +17,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <meta name="format-detection" content="telephone=no" />
+      </head>
       <body className={inter.className}>{children}</body>
     </html>
   );

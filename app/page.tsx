@@ -10,6 +10,9 @@ export default function Home() {
   const defaultScore = ["", "", "", "", "", "", "", "", "", ""];
   const [playerNames, setPlayerNames] = useState(["", "", "", ""]);
 
+  const [hasLoadedPlayers, setHasLoadedPlayers] = useState(false);
+  const [hasLoadedScores, setHasLoadedScores] = useState(false);
+
   const [playerOneScore, setPlayerOneScore] =
     useState<(number | string)[]>(defaultScore);
   const [playerTwoScore, setPlayerTwoScore] =
@@ -66,19 +69,20 @@ export default function Home() {
     const savedGameState = localStorage.getItem("scores");
     if (savedGameState) {
       const scores = JSON.parse(savedGameState);
-
       setPlayerOneScore(scores[0]);
       setPlayerTwoScore(scores[1]);
       setPlayerThreeScore(scores[2]);
       setPlayerFourScore(scores[3]);
     }
+    setHasLoadedScores(true);
   }
 
   function loadStoragePlayers() {
     const savedPlayersState = localStorage.getItem("players");
     if (savedPlayersState) {
-      setPlayerNames(JSON.parse(savedPlayersState));
+      setPlayerNames(() => JSON.parse(savedPlayersState));
     }
+    setHasLoadedPlayers(true);
   }
 
   function getCellScore(player: number, cellIndex: number) {
@@ -136,28 +140,39 @@ export default function Home() {
         <div className="shadow-lg">
           <div className="flex flex-col">
             <div className="flex justify-between">
-              {playerNames.map((_, index) => {
-                return (
-                  <Player
-                    key={`player-${index}`}
-                    index={index}
-                    playerNames={playerNames}
-                    setPlayerNames={setPlayerNames}
-                  />
-                );
-              })}
+              {!hasLoadedPlayers ? (
+                <div className="border skeleton bg-transparent rounded-bl-none rounded-lg rounded-br-none h-10 w-full"></div>
+              ) : (
+                playerNames.map((_, index) => {
+                  return (
+                    <Player
+                      key={`player-${index}`}
+                      index={index}
+                      playerNames={playerNames}
+                      setPlayerNames={setPlayerNames}
+                    />
+                  );
+                })
+              )}
             </div>
             <div className="flex justify-between">
               {[1, 2, 3, 4].map((index) => {
                 const { score } = getPlayerScoreSetter(index);
                 return (
-                  <TotalScore key={`total-score-${index}`} score={score} />
+                  <TotalScore
+                    key={`total-score-${index}`}
+                    score={score}
+                    hasLoadedScores={hasLoadedScores}
+                  />
                 );
               })}
             </div>
             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((_, scoreIndex) => {
               return (
-                <div key={`row-${scoreIndex}`} className="border-none flex">
+                <div
+                  key={`row-${scoreIndex}`}
+                  className="h-10 border-none flex"
+                >
                   <ScoreRow
                     getCellScore={getCellScore}
                     handleOnScoreChange={handleOnScoreChange}
