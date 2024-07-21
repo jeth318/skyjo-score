@@ -14,10 +14,10 @@ export default function TotalScore({ score, hasLoadedScores }: Props) {
       <div
         className={`score-cell-xl font-bold ${getTotalScoreColor(
           totalPlayerScore,
-          hasLoadedScores
-        )}  text-white flex justify-center h-14 items-center`}
+          hasLoadedScores,
+        )} flex h-14 items-center justify-center text-white`}
       >
-        <div className="w-full  text-center p-0 m-0">
+        <div className="m-0 w-full p-0 text-center">
           {hasLoadedScores ? totalPlayerScore : ""}
         </div>
       </div>

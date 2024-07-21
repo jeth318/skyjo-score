@@ -8,7 +8,7 @@ type Props = {
   handleOnScoreChange: (
     event: ChangeEvent<HTMLInputElement>,
     scoreIndex: number,
-    player: number
+    player: number,
   ) => void;
 };
 
