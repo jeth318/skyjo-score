@@ -4,23 +4,26 @@ import { ChangeEvent } from "react";
 
 type Props = {
   scoreIndex: number;
+  players: number[];
   getCellScore: (player: number, scoreIndex: number) => number | string;
   handleOnScoreChange: (
     event: ChangeEvent<HTMLInputElement>,
     scoreIndex: number,
-    player: number,
+    player: number
   ) => void;
 };
 
 export default function ScoreRow({
   scoreIndex,
+  players,
   handleOnScoreChange,
   getCellScore,
 }: Props) {
-  return [1, 2, 3, 4].map((player, i) => {
+  return players.map((player) => {
     const cellScore = getCellScore(player, scoreIndex);
-    const isLastRowFirstColumn = player === 1 && scoreIndex === 9;
-    const isLastRowLastColumn = player === 4 && scoreIndex === 9;
+    const isLastRowFirstColumn = player === 0 && scoreIndex === 9;
+    const isLastRowLastColumn =
+      player === players[players.length - 1] && scoreIndex === 9;
 
     return (
       <div
