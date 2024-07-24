@@ -14,7 +14,6 @@ export default function Player({ playerNames, setPlayerNames, index }: Props) {
         style={{
           width: "100%",
         }}
-        placeholder="Namn"
         value={playerNames[index]}
         onChange={({ target: { value } }) => {
           const updatedPlayerNames = [...playerNames];

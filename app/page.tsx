@@ -40,6 +40,9 @@ export default function Home() {
   const [playerEightScore, setPlayerEightScore] =
     useState<(number | string)[]>(defaultScore);
 
+  const visiblePlayersAsArray = [...Array(playersVisible).keys()];
+  const scoreRows = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
   function getPlayerScoreSetter(index: number) {
     switch (index) {
       case 0:
@@ -219,23 +222,19 @@ export default function Home() {
         <div className="shadow-lg">
           <div className="flex flex-col">
             <div className="flex justify-between">
-              {!hasLoadedPlayers ? (
-                <div className="skeleton h-10 w-full rounded-lg rounded-bl-none rounded-br-none border bg-transparent"></div>
-              ) : (
-                [...Array(playersVisible).keys()].map((index) => {
-                  return (
-                    <Player
-                      key={`player-${index}`}
-                      index={index}
-                      playerNames={playerNames}
-                      setPlayerNames={setPlayerNames}
-                    />
-                  );
-                })
-              )}
+              {visiblePlayersAsArray.map((index) => {
+                return (
+                  <Player
+                    key={`player-${index}`}
+                    index={index}
+                    playerNames={playerNames}
+                    setPlayerNames={setPlayerNames}
+                  />
+                );
+              })}
             </div>
             <div className="flex justify-between">
-              {[...Array(playersVisible).keys()].map((player) => {
+              {visiblePlayersAsArray.map((player) => {
                 const { score } = getPlayerScoreSetter(player);
                 return (
                   <TotalScore
@@ -246,15 +245,14 @@ export default function Home() {
                 );
               })}
             </div>
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((_, scoreIndex) => {
-              const players = [...Array(playersVisible).keys()];
+            {scoreRows.map((_, scoreIndex) => {
               return (
                 <div
                   key={`row-${scoreIndex}`}
                   className="flex h-10 border-none"
                 >
                   <ScoreRow
-                    players={players}
+                    players={visiblePlayersAsArray}
                     getCellScore={getCellScore}
                     handleOnScoreChange={handleOnScoreChange}
                     scoreIndex={scoreIndex}
