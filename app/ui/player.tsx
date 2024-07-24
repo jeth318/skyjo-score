@@ -2,15 +2,25 @@ import { Dispatch, SetStateAction } from "react";
 
 type Props = {
   index: number;
+  visiblePlayers: number;
   playerNames: string[];
   setPlayerNames: Dispatch<SetStateAction<string[]>>;
 };
 
-export default function Player({ playerNames, setPlayerNames, index }: Props) {
+export default function Player({
+  playerNames,
+  setPlayerNames,
+  visiblePlayers,
+  index,
+}: Props) {
+  console.log({ playerNames, index, visiblePlayers: visiblePlayers - 1 });
+
   return (
-    <div className="border-b-none h-10 w-full border first:rounded-tl-lg last:rounded-tr-lg">
+    <div
+      className={`h-10 w-full ${index === visiblePlayers - 1 ? "bg-red" : ""} last:rounded-tr-lg`}
+    >
       <input
-        className="h-10 bg-transparent text-center text-white"
+        className={`h-10 border border-gray-300 ${index === visiblePlayers - 1 ? "rounded-none rounded-tr-lg" : ""} ${index === 0 ? "rounded-none rounded-tl-lg" : ""} bg-gray-700  text-center text-white`}
         style={{
           width: "100%",
         }}

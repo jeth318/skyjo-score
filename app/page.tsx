@@ -225,6 +225,7 @@ export default function Home() {
               {visiblePlayersAsArray.map((index) => {
                 return (
                   <Player
+                    visiblePlayers={playersVisible}
                     key={`player-${index}`}
                     index={index}
                     playerNames={playerNames}
