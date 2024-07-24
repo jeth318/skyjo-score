@@ -17,10 +17,10 @@ export default function Player({
 
   return (
     <div
-      className={`h-10 w-full ${index === visiblePlayers - 1 ? "bg-red" : ""} last:rounded-tr-lg`}
+      className={`h-10 w-full border-r ${index === visiblePlayers - 1 ? "bg-red border-r-0" : ""} `}
     >
       <input
-        className={`h-10 border border-gray-300 ${index === visiblePlayers - 1 ? "rounded-none rounded-tr-lg" : ""} ${index === 0 ? "rounded-none rounded-tl-lg" : ""} bg-gray-700  text-center text-white`}
+        className={`h-10   ${index === visiblePlayers - 1 ? "rounded-tr-lg" : "rounded-none"} ${index === 0 ? "rounded-tl-lg" : "rounded-none"} bg-gray-800 text-center text-white`}
         style={{
           width: "100%",
         }}
