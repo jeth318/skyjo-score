@@ -13,8 +13,6 @@ export default function Player({
   visiblePlayers,
   index,
 }: Props) {
-  console.log({ playerNames, index, visiblePlayers: visiblePlayers - 1 });
-
   return (
     <div
       className={`h-10 w-full border-r ${index === visiblePlayers - 1 ? "bg-red border-r-0" : ""} `}
